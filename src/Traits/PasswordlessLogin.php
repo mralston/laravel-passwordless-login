@@ -1,8 +1,8 @@
 <?php
 
-namespace Grosv\LaravelPasswordlessLogin\Traits;
+namespace Mralston\LaravelPasswordlessLogin\Traits;
 
-use Grosv\LaravelPasswordlessLogin\LoginUrl;
+use Mralston\LaravelPasswordlessLogin\LoginUrl;
 
 /**
  * Logs in a user without a password.
@@ -16,7 +16,7 @@ trait PasswordlessLogin
      */
     public function getGuardNameAttribute(): string
     {
-        return config('laravel-passwordless-login.user_guard');
+        return config("laravel-passwordless-login.user_guard");
     }
 
     /**
@@ -26,7 +26,7 @@ trait PasswordlessLogin
      */
     public function getShouldRememberLoginAttribute(): bool
     {
-        return config('laravel-passwordless-login.remember_login');
+        return config("laravel-passwordless-login.remember_login");
     }
 
     /**
@@ -36,7 +36,7 @@ trait PasswordlessLogin
      */
     public function getLoginRouteExpiresInAttribute(): int
     {
-        return config('laravel-passwordless-login.login_route_expires');
+        return config("laravel-passwordless-login.login_route_expires");
     }
 
     /**
@@ -46,7 +46,7 @@ trait PasswordlessLogin
      */
     public function getRedirectUrlAttribute(): string
     {
-        return config('laravel-passwordless-login.redirect_on_success');
+        return config("laravel-passwordless-login.redirect_on_success");
     }
 
     /**
@@ -56,7 +56,7 @@ trait PasswordlessLogin
      */
     public function getLoginUseOnceAttribute()
     {
-        return config('laravel-passwordless-login.login_use_once');
+        return config("laravel-passwordless-login.login_use_once");
     }
 
     public function createPasswordlessLoginLink()
@@ -73,7 +73,9 @@ trait PasswordlessLogin
      */
     public function onPasswordlessLoginSuccess($request)
     {
-        return ($request->has('redirect_to')) ? redirect($request->redirect_to) : redirect($this->getRedirectUrlAttribute());
+        return $request->has("redirect_to")
+            ? redirect($request->redirect_to)
+            : redirect($this->getRedirectUrlAttribute());
     }
 
     /**
@@ -83,6 +85,8 @@ trait PasswordlessLogin
      */
     public function generateLoginUrl()
     {
-        return \Grosv\LaravelPasswordlessLogin\PasswordlessLogin::forUser($this)->generate();
+        return \Mralston\LaravelPasswordlessLogin\PasswordlessLogin::forUser(
+            $this
+        )->generate();
     }
 }

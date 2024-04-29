@@ -1,9 +1,9 @@
 <?php
 
-namespace Grosv\LaravelPasswordlessLogin;
+namespace Mralston\LaravelPasswordlessLogin;
 
-use Grosv\LaravelPasswordlessLogin\Exceptions\InvalidSignatureException;
-use Grosv\LaravelPasswordlessLogin\Exceptions\ExpiredSignatureException;
+use Mralston\LaravelPasswordlessLogin\Exceptions\InvalidSignatureException;
+use Mralston\LaravelPasswordlessLogin\Exceptions\ExpiredSignatureException;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Routing\UrlGenerator;
@@ -26,8 +26,10 @@ class LaravelPasswordlessLoginController extends Controller
      *
      * @param PasswordlessLoginService $passwordlessLoginService
      */
-    public function __construct(PasswordlessLoginService $passwordlessLoginService, UrlGenerator $urlGenerator)
-    {
+    public function __construct(
+        PasswordlessLoginService $passwordlessLoginService,
+        UrlGenerator $urlGenerator
+    ) {
         $this->passwordlessLoginService = $passwordlessLoginService;
         $this->urlGenerator = $urlGenerator;
     }
@@ -42,10 +44,13 @@ class LaravelPasswordlessLoginController extends Controller
      */
     public function login(Request $request)
     {
-        if (!$this->urlGenerator->hasCorrectSignature($request) ||
-            ($this->urlGenerator->signatureHasNotExpired($request) && !$this->passwordlessLoginService->requestIsNew())) {
+        if (
+            !$this->urlGenerator->hasCorrectSignature($request) ||
+            ($this->urlGenerator->signatureHasNotExpired($request) &&
+                !$this->passwordlessLoginService->requestIsNew())
+        ) {
             throw new InvalidSignatureException();
-        } else if (!$this->urlGenerator->signatureHasNotExpired($request)) {
+        } elseif (!$this->urlGenerator->signatureHasNotExpired($request)) {
             throw new ExpiredSignatureException();
         }
 
@@ -53,19 +58,28 @@ class LaravelPasswordlessLoginController extends Controller
 
         $user = $this->passwordlessLoginService->user;
 
-        $guard = $user->guard_name ?? config('laravel-passwordless-login.user_guard');
+        $guard =
+            $user->guard_name ??
+            config("laravel-passwordless-login.user_guard");
 
-        $rememberLogin = $user->should_remember_login ?? config('laravel-passwordless-login.remember_login');
+        $rememberLogin =
+            $user->should_remember_login ??
+            config("laravel-passwordless-login.remember_login");
 
-        $redirectUrl = $user->redirect_url ?? ($request->redirect_to ?: config('laravel-passwordless-login.redirect_on_success'));
+        $redirectUrl =
+            $user->redirect_url ??
+            ($request->redirect_to ?:
+                config("laravel-passwordless-login.redirect_on_success"));
 
-        if (method_exists(Auth::guard($guard), 'login')) {
+        if (method_exists(Auth::guard($guard), "login")) {
             Auth::guard($guard)->login($user, $rememberLogin);
-            
+
             abort_unless($user == Auth::guard($guard)->user(), 401);
         }
 
-        return $user->guard_name ? $user->onPasswordlessLoginSuccess($request) : redirect($redirectUrl);
+        return $user->guard_name
+            ? $user->onPasswordlessLoginSuccess($request)
+            : redirect($redirectUrl);
     }
 
     /**
@@ -85,6 +99,6 @@ class LaravelPasswordlessLoginController extends Controller
      */
     public function overrideTestRoute()
     {
-        return response('Redirected '.Auth::user()->name, 200);
+        return response("Redirected " . Auth::user()->name, 200);
     }
 }

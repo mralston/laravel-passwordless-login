@@ -1,6 +1,6 @@
 <?php
 
-namespace Grosv\LaravelPasswordlessLogin;
+namespace Mralston\LaravelPasswordlessLogin;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,8 +13,9 @@ class HandleAuthenticatedUsers
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-
-                return redirect($request->get('redirect_to', self::getHomeRoute()));
+                return redirect(
+                    $request->get("redirect_to", self::getHomeRoute())
+                );
             }
         }
 
@@ -29,18 +30,19 @@ class HandleAuthenticatedUsers
      */
     private static function getHomeRoute(): string
     {
-        $provider_name = '\\' . app()->getNamespace() . 'Providers\\RouteServiceProvider';
+        $provider_name =
+            "\\" . app()->getNamespace() . "Providers\\RouteServiceProvider";
 
         if (class_exists($provider_name)) {
-            if (method_exists($provider_name, 'home')) {
-                return call_user_func([$provider_name, 'home']);
+            if (method_exists($provider_name, "home")) {
+                return call_user_func([$provider_name, "home"]);
             }
 
-            if (defined($provider_name . '::HOME')) {
-                return constant($provider_name . '::HOME');
+            if (defined($provider_name . "::HOME")) {
+                return constant($provider_name . "::HOME");
             }
         }
 
-        return config('laravel-passwordless-login.redirect_on_success', '/');
+        return config("laravel-passwordless-login.redirect_on_success", "/");
     }
 }

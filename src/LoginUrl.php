@@ -1,6 +1,6 @@
 <?php
 
-namespace Grosv\LaravelPasswordlessLogin;
+namespace Mralston\LaravelPasswordlessLogin;
 
 use Illuminate\Contracts\Auth\Authenticatable as User;
 use Illuminate\Support\Facades\URL;
@@ -35,9 +35,14 @@ class LoginUrl
 
         $this->passwordlessLoginService = new PasswordlessLoginService();
 
-        $this->route_expires = now()->addMinutes($this->user->login_route_expires_in ?? config('laravel-passwordless-login.login_route_expires'));
+        $this->route_expires = now()->addMinutes(
+            $this->user->login_route_expires_in ??
+                config("laravel-passwordless-login.login_route_expires")
+        );
 
-        $this->route_name = config('laravel-passwordless-login.login_route_name');
+        $this->route_name = config(
+            "laravel-passwordless-login.login_route_name"
+        );
     }
 
     public function setRedirectUrl(string $redirectUrl)
@@ -51,9 +56,9 @@ class LoginUrl
             $this->route_name,
             $this->route_expires,
             [
-                'uid'           => $this->user->getAuthIdentifier(),
-                'redirect_to'   => $this->redirect_url,
-                'user_type'     => UserClass::toSlug(get_class($this->user)),
+                "uid" => $this->user->getAuthIdentifier(),
+                "redirect_to" => $this->redirect_url,
+                "user_type" => UserClass::toSlug(get_class($this->user)),
             ]
         );
     }

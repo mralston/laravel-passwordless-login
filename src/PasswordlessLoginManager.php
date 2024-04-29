@@ -1,18 +1,18 @@
 <?php
 
-namespace Grosv\LaravelPasswordlessLogin;
+namespace Mralston\LaravelPasswordlessLogin;
 
 use Illuminate\Contracts\Auth\Authenticatable as User;
 
 /**
- * The class used by \Grosv\LaravelPasswordlessLogin\PasswordlessLoginFacade.
+ * The class used by \Mralston\LaravelPasswordlessLogin\PasswordlessLoginFacade.
  *
  * Class PasswordlessLogin
  */
 class PasswordlessLoginManager
 {
     /**
-     * @var \Grosv\LaravelPasswordlessLogin\LoginUrl
+     * @var \Mralston\LaravelPasswordlessLogin\LoginUrl
      */
     private $loginUrl;
 
